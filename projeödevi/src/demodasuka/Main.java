@@ -31,6 +31,7 @@ import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -85,10 +86,10 @@ public class Main extends JFrame{
 	}
 	
 	
-	public void rasgeleKitap(JButton a) {//jbutton içeren fonxyon constructor
+	public void rasgeleKitap(JButton a) {//jbutton iÃ§eren fonxyon constructor
 		
 		Random srand = new Random();
-		int x = srand.nextInt(4);//1-4 arası random sayı
+		int x = srand.nextInt(4);//1-4 arasÄ± random sayÄ±
 		ArrayList<String> arrlist = new ArrayList<String>();
 		
 		x = x+1;
@@ -142,7 +143,7 @@ public class Main extends JFrame{
 				
 			}
 		});
-		//kitapbutonları
+		//kitapbutonlarÄ±
 		JButton bir= new JButton();
 		rasgeleKitap(bir);
 		bir.setBounds(250, 130, 125, 50);
@@ -242,7 +243,7 @@ public class Main extends JFrame{
 				
 			}
 		});
-		//***************************************************************************//kitaplık üst raf bitti
+		//***************************************************************************//kitaplÄ±k Ã¼st raf bitti
 		JButton k10= new JButton();
 		rasgeleKitap(k10);
 		k10.setBounds(250, 270, 125, 52);
@@ -386,7 +387,7 @@ public class Main extends JFrame{
 			}
 		});
 		
-		//kitap butonları bitti
+		//kitap butonlarÄ± bitti
 		
 		JButton searchbutton = new JButton("Search");
 		searchbutton.setBounds(920, 50, 75, 35);
@@ -406,7 +407,7 @@ public class Main extends JFrame{
 		buybutton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if(output.getText()!=null) {
-				output.setText(output.getText()+" kitabı alındı");
+				output.setText(output.getText()+" kitabÄ± alÄ±ndÄ±");
 				
 				
 				
@@ -419,7 +420,7 @@ public class Main extends JFrame{
 		rentbutton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if(output.getText()!=null) {
-				output.setText(output.getText()+" kitabı kiralandı");
+				output.setText(output.getText()+" kitabÄ± kiralandÄ±");
 				}
 			}
 		});
@@ -429,7 +430,7 @@ public class Main extends JFrame{
 		addbook.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				try {
-					File file = new File("docs/kitaplar.txt");//yazmak için
+					File file = new File("docs/kitaplar.txt");//yazmak iÃ§in
 					FileWriter fw = new FileWriter(file,true);
 					BufferedWriter bw = new BufferedWriter(fw);
 					
@@ -446,6 +447,20 @@ public class Main extends JFrame{
 			}
 		});
 		
+		JButton deletebook = new JButton("Delete Book");
+		deletebook.setBounds(140, 560, 120, 30);
+		deletebook.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				try {
+					delete(output2.getText());
+					output.setText("book is deleted");
+					output2.setText("");
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		});
 		
 				
 				
@@ -499,7 +514,7 @@ public class Main extends JFrame{
 		panel.add(buybutton);
 		panel.add(rentbutton);
 		panel.add(addbook);
-		
+		panel.add(deletebook);
 		
 		panel.add(backgraund);
 		
@@ -507,8 +522,8 @@ public class Main extends JFrame{
 		setTitle("MyLibrary");
 		setSize(1200, 700);
 		setVisible(true);
-		setLocationRelativeTo(null);//bastığında ortada çıksın diye
-		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);//kapatma yerinde kapatmıyo
+		setLocationRelativeTo(null);//bastÄ±ÄŸÄ±nda ortada Ã§Ä±ksÄ±n diye
+		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);//kapatma yerinde kapatmÄ±yo
 	}
 	
 	
@@ -521,11 +536,40 @@ public class Main extends JFrame{
 		girissayfasi.setTitle("user login");
 		girissayfasi.setVisible(true);
 		girissayfasi.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		girissayfasi.setLayout(new GridLayout(3,5));//giriş sayfasını 3 e böldü
+		girissayfasi.setLayout(new GridLayout(3,5));//giriÅŸ sayfasÄ±nÄ± 3 e bÃ¶ldÃ¼
 		girissayfasi.setLocationRelativeTo(null);
 		
 		//Main bastir = new Main();
 		
+	}
+	
+	public Boolean delete(String id) throws IOException
+	{
+		File inputFile = new File("docs/kitaplar.txt");
+		File tempFile = new File("docs/kitaplar_temp.txt");
+
+		BufferedReader reader = new BufferedReader(new FileReader(inputFile));
+		BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile));
+
+		String lineToRemove = id;
+		String currentLine;
+
+		while((currentLine = reader.readLine()) != null) 
+		{
+		    // trim newline when comparing with lineToRemove
+			String[] parts =currentLine.split(" ");
+		    if(parts[0].equals(lineToRemove)) 
+		    	continue;
+		    writer.write(currentLine + System.getProperty("line.separator"));
+		}
+		writer.close(); 
+		reader.close(); 
+		inputFile.setWritable(true);
+		tempFile.setWritable(true);
+		boolean successful1=inputFile.delete();
+		boolean successful = tempFile.renameTo(inputFile);
+		System.out.println(successful+" "+successful1);
+		return successful;
 	}
 
 }
